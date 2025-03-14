@@ -17,8 +17,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 bg-primary border-b border-surface">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/">
-          <a className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
             <div className="bg-secondary rounded-full p-1.5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -39,17 +38,20 @@ const Header = () => {
                 <path d="M9 16h6" />
               </svg>
             </div>
-            <span className="font-heading font-bold text-xl">Indie Game Randomizer</span>
-          </a>
-        </Link>
+            <Link href="/">
+              <a className="font-heading font-bold text-xl">Indie Game Randomizer</a>
+            </Link>
+          </div>
 
         <div className="hidden md:flex items-center space-x-4">
           {navigationLinks.map((link) => (
-            <Link key={link.name} href={link.path}>
-              <a className="text-text hover:text-secondary transition-colors">
-                {link.name}
-              </a>
-            </Link>
+            <div key={link.name}>
+              <Link href={link.path}>
+                <a className="text-text hover:text-secondary transition-colors">
+                  {link.name}
+                </a>
+              </Link>
+            </div>
           ))}
         </div>
 
@@ -63,11 +65,13 @@ const Header = () => {
             <SheetContent className="bg-background border-surface">
               <div className="flex flex-col space-y-4 mt-8">
                 {navigationLinks.map((link) => (
-                  <Link key={link.name} href={link.path}>
-                    <a className="text-text hover:text-secondary transition-colors py-2">
-                      {link.name}
-                    </a>
-                  </Link>
+                  <div key={link.name}>
+                    <Link href={link.path}>
+                      <a className="text-text hover:text-secondary transition-colors py-2">
+                        {link.name}
+                      </a>
+                    </Link>
+                  </div>
                 ))}
               </div>
             </SheetContent>

@@ -5,7 +5,7 @@ import FilterSidebar from "@/components/FilterSidebar";
 import RandomGameButton from "@/components/RandomGameButton";
 import GameCard from "@/components/GameCard";
 import { Filter, Game } from "@shared/schema";
-import { Pagination } from "@/components/ui/pagination";
+import CustomPagination from "@/components/CustomPagination";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = () => {
@@ -116,7 +116,7 @@ const Home = () => {
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex justify-center mt-8">
-                    <Pagination
+                    <CustomPagination
                       currentPage={filters.page || 1}
                       totalPages={totalPages}
                       onPageChange={handlePageChange}
