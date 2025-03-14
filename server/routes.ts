@@ -199,33 +199,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/games/:id/similar", async (req, res) => {
     try {
       const gameId = req.params.id;
-      const apiUrl = `${RAWG_BASE_URL}/games/${gameId}/game-series?key=${RAWG_API_KEY}`;
       
-      // First try to get games from the same series
-      let data = await fetchWithCache(apiUrl) as RawgResponse;
+      // Get the game details first to extract genres
+      const gameDetailsUrl = `${RAWG_BASE_URL}/games/${gameId}?key=${RAWG_API_KEY}`;
+      const gameDetails = await fetchWithCache(gameDetailsUrl) as any;
       
-      // If no games in the series, get games with similar tags/genres
-      if (!data.results || data.results.length < 3) {
-        // Get the game details first to extract genres
-        const gameDetailsUrl = `${RAWG_BASE_URL}/games/${gameId}?key=${RAWG_API_KEY}`;
-        const gameDetails = await fetchWithCache(gameDetailsUrl) as any;
+      if (gameDetails.genres) {
+        // Get genres from the game, but always include indie
+        let genreSlugs = "indie";  // Always start with indie
         
-        if (gameDetails.genres && gameDetails.genres.length > 0) {
-          // Get genres from the game, but always include indie
-          let genreSlugs = "indie";  // Always start with indie
+        // Add other genres (up to 2 more) from the original game
+        const otherGenres = gameDetails.genres
+          .filter((g: any) => g.slug !== "indie")
+          .slice(0, 2)
+          .map((g: any) => g.slug);
           
-          // Add other genres (up to 2 more) from the original game
-          const otherGenres = gameDetails.genres
-            .filter((g: any) => g.slug !== "indie")
-            .slice(0, 2)
-            .map((g: any) => g.slug);
-            
-          if (otherGenres.length > 0) {
-            genreSlugs += `,${otherGenres.join(',')}`;
-          }
-          
-          const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genreSlugs}&exclude_additions=true&page_size=6`;
-          data = await fetchWithCache(similarUrl) as RawgResponse;
+        if (otherGenres.length > 0) {
+          genreSlugs += `,${otherGenres.join(',')}`;
+        }
+        
+        const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genreSlugs}&exclude_additions=true&page_size=6`;
+        const data = await fetchWithCache(similarUrl) as RawgResponse;
           
           // Filter out the current game
           if (data.results) {
