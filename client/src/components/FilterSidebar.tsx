@@ -33,9 +33,29 @@ const FilterSidebar = ({ filters, onFilterChange }: FilterSidebarProps) => {
     queryKey: ['/api/platforms'],
   });
   
+  // Define the types for our API responses
+  type ApiResponse<T> = {
+    results: T[];
+    count: number;
+    next: string | null;
+    previous: string | null;
+  };
+  
+  type GenreType = {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  
+  type PlatformType = {
+    id: number;
+    name: string;
+    slug: string;
+  };
+
   // Extract results with proper type checking
-  const genres = genresData?.results || [];
-  const platforms = platformsData?.results || [];
+  const genres: GenreType[] = genresData ? (genresData as any).results || [] : [];
+  const platforms: PlatformType[] = platformsData ? (platformsData as any).results || [] : [];
 
   // Apply filters after a delay
   const applyFiltersWithDebounce = useCallback((newFilters: Partial<Filter>) => {
@@ -95,7 +115,7 @@ const FilterSidebar = ({ filters, onFilterChange }: FilterSidebarProps) => {
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {genresData?.results?.filter((genre: any) => genre.slug !== "indie").map((genre: any) => (
+              {genres.filter((genre) => genre.slug !== "indie").map((genre) => (
                 <button
                   key={genre.slug}
                   className={`px-3 py-1 text-sm rounded-full transition-colors ${
