@@ -38,18 +38,16 @@ const Header = () => {
                 <path d="M9 16h6" />
               </svg>
             </div>
-            <Link href="/">
-              <a className="font-heading font-bold text-xl">Indie Game Randomizer</a>
+            <Link href="/" className="font-heading font-bold text-xl">
+              Indie Game Randomizer
             </Link>
           </div>
 
         <div className="hidden md:flex items-center space-x-4">
           {navigationLinks.map((link) => (
             <div key={link.name}>
-              <Link href={link.path}>
-                <a className="text-text hover:text-secondary transition-colors">
-                  {link.name}
-                </a>
+              <Link href={link.path} className="text-text hover:text-secondary transition-colors">
+                {link.name}
               </Link>
             </div>
           ))}
@@ -66,10 +64,8 @@ const Header = () => {
               <div className="flex flex-col space-y-4 mt-8">
                 {navigationLinks.map((link) => (
                   <div key={link.name}>
-                    <Link href={link.path}>
-                      <a className="text-text hover:text-secondary transition-colors py-2">
-                        {link.name}
-                      </a>
+                    <Link href={link.path} className="text-text hover:text-secondary transition-colors py-2">
+                      {link.name}
                     </Link>
                   </div>
                 ))}

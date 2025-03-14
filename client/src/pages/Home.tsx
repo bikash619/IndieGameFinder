@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Home = () => {
   // Initial filter state
   const [filters, setFilters] = useState<Partial<Filter>>({
-    genres: ["indie"],
+    genres: [],
     minRating: 0,
     minReviews: 0,
     yearStart: 2000,
