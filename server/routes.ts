@@ -219,12 +219,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           genreSlugs += `,${otherGenres.join(',')}`;
         }
 
-        const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genreSlugs}&exclude_additions=true&page_size=6`;
+        // Always include indie in genres for similar games
+        const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=indie&exclude_additions=true&page_size=40`;
         data = await fetchWithCache(similarUrl) as RawgResponse;
 
-        // Filter out the current game
+        // Filter out the current game and limit to 3 games
         if (data.results) {
-          data.results = data.results.filter(game => game.id !== Number(gameId));
+          data.results = data.results
+            .filter(game => game.id !== Number(gameId))
+            .slice(0, 3);
         }
       }
 
