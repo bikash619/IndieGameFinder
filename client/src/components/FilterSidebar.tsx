@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface FilterSidebarProps {
   filters: Partial<Filter>;
   onFilterChange: (filters: Partial<Filter>) => void;
-  onApplyFilters: () => void;
 }
 
-const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSidebarProps) => {
-  // Local state for filter values before applying
+const FilterSidebar = ({ filters, onFilterChange }: FilterSidebarProps) => {
+  // Local state for filter values
   const [localFilters, setLocalFilters] = useState<Partial<Filter>>(filters);
+  
+  // Debounce timer for applying filters automatically
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Update local filters when parent filters change
   useEffect(() => {
@@ -23,17 +25,34 @@ const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSideba
   }, [filters]);
 
   // Fetch genres and platforms
-  const { data: genresData = { results: [] }, isLoading: genresLoading } = useQuery({
+  const { data: genresData, isLoading: genresLoading } = useQuery({
     queryKey: ['/api/genres'],
   });
 
-  const { data: platformsData = { results: [] }, isLoading: platformsLoading } = useQuery({
+  const { data: platformsData, isLoading: platformsLoading } = useQuery({
     queryKey: ['/api/platforms'],
   });
+  
+  // Extract results with proper type checking
+  const genres = genresData?.results || [];
+  const platforms = platformsData?.results || [];
+
+  // Apply filters after a delay
+  const applyFiltersWithDebounce = useCallback((newFilters: Partial<Filter>) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    debounceTimerRef.current = setTimeout(() => {
+      onFilterChange(newFilters);
+    }, 500); // 500ms delay
+  }, [onFilterChange]);
 
   // Update local filter state
   const updateFilter = (key: keyof Filter, value: any) => {
-    setLocalFilters((prev) => ({ ...prev, [key]: value }));
+    const newFilters = { ...localFilters, [key]: value };
+    setLocalFilters(newFilters);
+    applyFiltersWithDebounce(newFilters);
   };
 
   // Toggle genre selection
@@ -44,19 +63,16 @@ const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSideba
         ? currentGenres.filter((g) => g !== genreSlug)
         : [...currentGenres, genreSlug];
       
-      return { ...prev, genres: updated };
+      const newFilters = { ...prev, genres: updated };
+      // Apply filters with debounce
+      applyFiltersWithDebounce(newFilters);
+      return newFilters;
     });
   };
 
   // Determine if a genre is selected
   const isGenreSelected = (genreSlug: string) => {
     return (localFilters.genres || []).includes(genreSlug);
-  };
-
-  // Handle apply button click
-  const handleApply = () => {
-    onFilterChange(localFilters);
-    onApplyFilters();
   };
 
   return (
@@ -168,12 +184,9 @@ const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSideba
           </div>
         </div>
 
-        <Button
-          className="w-full bg-secondary hover:bg-opacity-90 transition-colors mt-4"
-          onClick={handleApply}
-        >
-          Apply Filters
-        </Button>
+        <p className="text-center text-xs text-gray-400 mt-4">
+          Filters are applied automatically
+        </p>
       </div>
     </aside>
   );

@@ -10,7 +10,11 @@ interface GameCardProps {
 
 const GameCard = ({ game }: GameCardProps) => {
   const releaseYear = game.released ? new Date(game.released).getFullYear() : "TBA";
-  const developerName = game.developers?.[0]?.name || "Unknown Developer";
+  // Only show developer name if it exists and is not null
+  const developerName = game.developers && 
+                       game.developers.length > 0 && 
+                       game.developers[0]?.name ? 
+                       game.developers[0].name : "";
   
   // Get up to 3 genres for display
   const genres = game.genres?.slice(0, 3) || [];
@@ -44,8 +48,12 @@ const GameCard = ({ game }: GameCardProps) => {
         <h3 className="font-heading font-semibold text-lg mb-1 line-clamp-1">{game.name}</h3>
         <div className="flex items-center text-sm text-gray-400 mb-3">
           <span>{releaseYear}</span>
-          <span className="mx-2">•</span>
-          <span className="truncate">{developerName}</span>
+          {developerName && (
+            <>
+              <span className="mx-2">•</span>
+              <span className="truncate">{developerName}</span>
+            </>
+          )}
         </div>
         <div className="flex flex-wrap gap-1 mb-3">
           {genres.map((genre) => (

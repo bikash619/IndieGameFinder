@@ -28,14 +28,10 @@ const Home = () => {
   const games = data?.results || [];
   const totalPages = data ? Math.ceil(data.count / 20) : 0;
 
-  // Handle applying filters
-  const handleApplyFilters = () => {
-    refetch();
-  };
-
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<Filter>) => {
     setFilters({ ...newFilters, page: 1 });
+    // No need to manually refetch as the query will automatically update with new filter values
   };
 
   // Handle pagination
@@ -61,7 +57,6 @@ const Home = () => {
         <FilterSidebar
           filters={filters}
           onFilterChange={handleFilterChange}
-          onApplyFilters={handleApplyFilters}
         />
 
         <div className="flex-1">
