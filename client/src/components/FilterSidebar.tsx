@@ -79,7 +79,7 @@ const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSideba
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {genresData?.results?.map((genre: any) => (
+              {genresData?.results?.filter((genre: any) => genre.slug !== "indie").map((genre: any) => (
                 <button
                   key={genre.slug}
                   className={`px-3 py-1 text-sm rounded-full transition-colors ${
