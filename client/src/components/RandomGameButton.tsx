@@ -19,7 +19,12 @@ const RandomGameButton = ({ filters }: RandomGameButtonProps) => {
   const randomGameMutation = useMutation({
     mutationFn: async () => {
       setIsLoading(true);
-      return await getRandomGame(filters);
+      // Make sure indie genre is always included in random game search
+      const updatedFilters = { ...filters };
+      if (!updatedFilters.genres || !updatedFilters.genres.includes("indie")) {
+        updatedFilters.genres = [...(updatedFilters.genres || []), "indie"];
+      }
+      return await getRandomGame(updatedFilters);
     },
     onSuccess: (data) => {
       if (data && data.id) {

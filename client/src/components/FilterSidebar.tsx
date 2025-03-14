@@ -71,6 +71,12 @@ const FilterSidebar = ({ filters, onFilterChange }: FilterSidebarProps) => {
   // Update local filter state
   const updateFilter = (key: keyof Filter, value: any) => {
     const newFilters = { ...localFilters, [key]: value };
+    
+    // Always make sure "indie" is included in the genres
+    if (key === "genres" && Array.isArray(value) && !value.includes("indie")) {
+      newFilters.genres = [...value, "indie"];
+    }
+    
     setLocalFilters(newFilters);
     applyFiltersWithDebounce(newFilters);
   };
@@ -83,7 +89,14 @@ const FilterSidebar = ({ filters, onFilterChange }: FilterSidebarProps) => {
         ? currentGenres.filter((g) => g !== genreSlug)
         : [...currentGenres, genreSlug];
       
-      const newFilters = { ...prev, genres: updated };
+      // Always make sure "indie" is included in the genres
+      // but we don't show it in the UI as a toggleable option
+      let finalGenres = updated;
+      if (!finalGenres.includes("indie")) {
+        finalGenres = [...finalGenres, "indie"];
+      }
+      
+      const newFilters = { ...prev, genres: finalGenres };
       // Apply filters with debounce
       applyFiltersWithDebounce(newFilters);
       return newFilters;

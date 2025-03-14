@@ -11,7 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Home = () => {
   // Initial filter state
   const [filters, setFilters] = useState<Partial<Filter>>({
-    genres: [],
+    // Always include "indie" genre by default to ensure only indie games are shown
+    genres: ["indie"],
     minRating: 0,
     minReviews: 0,
     yearStart: 2000,
@@ -30,13 +31,26 @@ const Home = () => {
 
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<Filter>) => {
-    setFilters({ ...newFilters, page: 1 });
+    // Ensure 'indie' is always included in the genres
+    const updatedFilters = { ...newFilters };
+    if (!updatedFilters.genres || !updatedFilters.genres.includes("indie")) {
+      updatedFilters.genres = [...(updatedFilters.genres || []), "indie"];
+    }
+    
+    setFilters({ ...updatedFilters, page: 1 });
     // No need to manually refetch as the query will automatically update with new filter values
   };
 
   // Handle pagination
   const handlePageChange = (page: number) => {
-    setFilters((prev) => ({ ...prev, page }));
+    setFilters((prev) => {
+      // Ensure 'indie' is still included in the genres during pagination
+      const updatedFilters = { ...prev, page };
+      if (!updatedFilters.genres || !updatedFilters.genres.includes("indie")) {
+        updatedFilters.genres = [...(updatedFilters.genres || []), "indie"];
+      }
+      return updatedFilters;
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
