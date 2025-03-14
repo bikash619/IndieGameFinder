@@ -23,11 +23,11 @@ const FilterSidebar = ({ filters, onFilterChange, onApplyFilters }: FilterSideba
   }, [filters]);
 
   // Fetch genres and platforms
-  const { data: genresData, isLoading: genresLoading } = useQuery({
+  const { data: genresData = { results: [] }, isLoading: genresLoading } = useQuery({
     queryKey: ['/api/genres'],
   });
 
-  const { data: platformsData, isLoading: platformsLoading } = useQuery({
+  const { data: platformsData = { results: [] }, isLoading: platformsLoading } = useQuery({
     queryKey: ['/api/platforms'],
   });
 

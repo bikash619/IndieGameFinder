@@ -39,23 +39,23 @@ const Footer = () => {
             <h4 className="font-heading font-semibold text-lg mb-4">Navigation</h4>
             <ul className="space-y-2 text-gray-400">
               <li>
-                <Link href="/">
-                  <a className="hover:text-secondary transition-colors">Home</a>
+                <Link href="/" className="hover:text-secondary transition-colors">
+                  Home
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="hover:text-secondary transition-colors">Browse Games</a>
+                <Link href="/" className="hover:text-secondary transition-colors">
+                  Browse Games
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="hover:text-secondary transition-colors">Collections</a>
+                <Link href="/" className="hover:text-secondary transition-colors">
+                  Collections
                 </Link>
               </li>
               <li>
-                <Link href="/">
-                  <a className="hover:text-secondary transition-colors">About</a>
+                <Link href="/" className="hover:text-secondary transition-colors">
+                  About
                 </Link>
               </li>
             </ul>
