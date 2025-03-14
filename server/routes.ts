@@ -57,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Build the API URL with query parameters
       let apiUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}`;
-      
+
       // Always include 'indie' in genres if not searching for specific genres
       if (queryParams.genres && queryParams.genres.length > 0) {
         apiUrl += `&genres=${queryParams.genres.join(",")}`;
@@ -125,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get a larger page size to have more options to choose from
       let apiUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&page_size=40`;
-      
+
       // Always include 'indie' in genres if not searching for specific genres
       if (queryParams.genres && queryParams.genres.length > 0) {
         apiUrl += `&genres=${queryParams.genres.join(",")}`;
@@ -159,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       apiUrl += `&page=${randomPage}`;
 
       const data = await fetchWithCache(apiUrl) as RawgResponse;
-      
+
       if (!data.results || data.results.length === 0) {
         return res.status(404).json({ message: "No games found matching the criteria" });
       }
@@ -199,36 +199,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/games/:id/similar", async (req, res) => {
     try {
       const gameId = req.params.id;
-      
+      let data;
+
       // Get the game details first to extract genres
       const gameDetailsUrl = `${RAWG_BASE_URL}/games/${gameId}?key=${RAWG_API_KEY}`;
       const gameDetails = await fetchWithCache(gameDetailsUrl) as any;
-      
+
       if (gameDetails.genres) {
         // Get genres from the game, but always include indie
         let genreSlugs = "indie";  // Always start with indie
-        
+
         // Add other genres (up to 2 more) from the original game
         const otherGenres = gameDetails.genres
           .filter((g: any) => g.slug !== "indie")
           .slice(0, 2)
           .map((g: any) => g.slug);
-          
+
         if (otherGenres.length > 0) {
           genreSlugs += `,${otherGenres.join(',')}`;
         }
-        
+
         const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genreSlugs}&exclude_additions=true&page_size=6`;
-        const data = await fetchWithCache(similarUrl) as RawgResponse;
-          
-          // Filter out the current game
-          if (data.results) {
-            data.results = data.results.filter(game => game.id !== Number(gameId));
-          }
+        data = await fetchWithCache(similarUrl) as RawgResponse;
+
+        // Filter out the current game
+        if (data.results) {
+          data.results = data.results.filter(game => game.id !== Number(gameId));
         }
       }
-      
-      res.json(data);
+
+      res.json(data || { results: [] });
     } catch (error) {
       console.error("Error fetching similar games:", error);
       res.status(500).json({ message: "Failed to fetch similar games" });
