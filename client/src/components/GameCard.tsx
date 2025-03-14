@@ -16,8 +16,30 @@ const GameCard = ({ game }: GameCardProps) => {
                        game.developers[0]?.name ? 
                        game.developers[0].name : "";
   
-  // Get up to 3 genres for display
-  const genres = game.genres?.slice(0, 3) || [];
+  // Prioritize the indie genre and get up to 3 genres for display
+  let genres = [];
+  
+  // Check if game has genres
+  if (game.genres && game.genres.length > 0) {
+    // Find the indie genre
+    const indieGenre = game.genres.find(g => g.slug === 'indie' || g.name.toLowerCase() === 'indie');
+    
+    // If indie genre exists, put it first
+    if (indieGenre) {
+      // Add indie genre first
+      genres.push(indieGenre);
+      
+      // Add up to 2 more non-indie genres
+      const otherGenres = game.genres
+        .filter(g => g.id !== indieGenre.id)
+        .slice(0, 2);
+      
+      genres = [...genres, ...otherGenres];
+    } else {
+      // If no indie genre, just take the first 3
+      genres = game.genres.slice(0, 3);
+    }
+  }
 
   return (
     <Card className="game-card bg-background rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
