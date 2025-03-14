@@ -62,10 +62,11 @@ const GameCard = ({ game }: GameCardProps) => {
           {game.metacritic && (
             <RatingDisplay score={game.metacritic} size="sm" />
           )}
-          <Link href={`/game/${game.id}`}>
-            <a className="text-xs px-3 py-1 bg-secondary rounded-full hover:bg-opacity-90 transition-colors">
-              View Details
-            </a>
+          <Link 
+            href={`/game/${game.id}`}
+            className="text-xs px-3 py-1 bg-secondary rounded-full hover:bg-opacity-90 transition-colors"
+          >
+            View Details
           </Link>
         </div>
       </CardContent>

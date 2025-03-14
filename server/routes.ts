@@ -212,7 +212,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (gameDetails.genres && gameDetails.genres.length > 0) {
           const genreSlugs = gameDetails.genres.map((g: any) => g.slug).join(',');
-          const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genreSlugs}&exclude_additions=true&page_size=6`;
+          // Always include indie in genre recommendations
+          const genres = genreSlugs.includes('indie') ? genreSlugs : `indie,${genreSlugs}`;
+          const similarUrl = `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&genres=${genres}&exclude_additions=true&page_size=6`;
           data = await fetchWithCache(similarUrl) as RawgResponse;
           
           // Filter out the current game
