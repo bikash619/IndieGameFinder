@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { getSimilarGames } from "@/lib/api";
 import GameCard from "./GameCard";
@@ -11,33 +12,32 @@ interface SimilarGamesProps {
 }
 
 const SimilarGames = ({ gameId, genres = [] }: SimilarGamesProps) => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`/api/games/${gameId}/similar`],
+    queryFn: () => getSimilarGames(gameId)
   });
 
   if (isLoading) {
     return <SimilarGamesSkeleton />;
   }
 
-  if (error || !data || !data.results || data.results.length === 0) {
+  if (!data?.results || data.results.length === 0) {
     return null;
   }
 
-  // Filter for games with the indie genre and limit to 3 games
+  // Filter and limit to 3 games, excluding the current game
   const similarGames = data.results
-    .filter(game => 
-      game.genres && 
-      game.genres.some(genre => genre.slug === 'indie')
-    )
+    .filter(game => game.id !== parseInt(gameId))
     .slice(0, 3);
-  
-  // Create a description based on genres
+
+  if (similarGames.length === 0) {
+    return null;
+  }
+
   const genreNames = genres
     .slice(0, 3)
     .map((g) => g.name)
     .join(", ");
-  
-  const developerName = similarGames[0]?.developers?.[0]?.name || "";
 
   return (
     <section>
@@ -45,14 +45,10 @@ const SimilarGames = ({ gameId, genres = [] }: SimilarGamesProps) => {
         <h2 className="font-heading font-semibold text-2xl">
           Similar Games You Might Like
         </h2>
-        <Button variant="link" className="text-secondary p-0">
-          View All
-        </Button>
       </div>
       
       <p className="text-gray-400 mb-6">
-        {genreNames ? `Based on ${genreNames} games` : "Games you might enjoy"}
-        {developerName ? ` from ${developerName}` : ""}
+        {genreNames ? `Based on ${genreNames}` : "Games you might enjoy"}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,7 +60,6 @@ const SimilarGames = ({ gameId, genres = [] }: SimilarGamesProps) => {
   );
 };
 
-// Skeleton loader for SimilarGames
 const SimilarGamesSkeleton = () => (
   <section>
     <div className="flex items-center justify-between mb-5">
