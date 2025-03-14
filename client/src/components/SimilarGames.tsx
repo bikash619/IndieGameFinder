@@ -23,8 +23,13 @@ const SimilarGames = ({ gameId, genres = [] }: SimilarGamesProps) => {
     return null;
   }
 
-  // Limit to 3 games
-  const similarGames = data.results.slice(0, 3);
+  // Filter for games with the indie genre and limit to 3 games
+  const similarGames = data.results
+    .filter(game => 
+      game.genres && 
+      game.genres.some(genre => genre.slug === 'indie')
+    )
+    .slice(0, 3);
   
   // Create a description based on genres
   const genreNames = genres
