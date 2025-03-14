@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         apiUrl += `&search=${encodeURIComponent(queryParams.search)}`;
       }
 
-      apiUrl += `&page=${queryParams.page}&page_size=${queryParams.page_size}`;
+      apiUrl += `&page=${queryParams.page}&page_size=1`;
 
       const data = await fetchWithCache(apiUrl) as RawgResponse;
       res.json(data);

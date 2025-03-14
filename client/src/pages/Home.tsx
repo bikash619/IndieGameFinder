@@ -116,10 +116,8 @@ const Home = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {games.map((game: Game) => (
-                    <GameCard key={game.id} game={game} />
-                  ))}
+                <div className="max-w-2xl mx-auto mb-8">
+                  {games.length > 0 && <GameCard game={games[0]} />}
                 </div>
 
                 {/* Pagination */}
